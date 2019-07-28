@@ -1,16 +1,15 @@
 from kivy.app import App
 from kivy.config import Config
-Config.set("graphics", "resizable", 1)
-Config.set("graphics", "width", 1000)
-Config.set("graphics", "height", 600)
-'''from kivy.core.window import Window
-Window.fullscreen = True'''
 from kivy.graphics import Color, Rectangle
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import Label
-import openpyxl
+from openpyxl import load_workbook
+
+Config.set("graphics", "resizable", 1)
+Config.set("graphics", "width", 1000)
+Config.set("graphics", "height", 600)
 
 
 class ThemeLabel(Label):
@@ -31,32 +30,31 @@ class Main(BoxLayout):
         super(Main, self).__init__(**kwargs)
         self.add_widget(Button(text="START", on_press=self.main_window))
 
-
     def main_window(self, instance):
         self.clear_widgets()
         self.orientation = "horizontal"
 
-        ThemesLayout = BoxLayout(orientation="vertical",
-                                 padding=[5, 5, 2.5, 5],
-                                 spacing=5,
-                                 size_hint=[.45, 1])
+        themes_layout = BoxLayout(orientation="vertical",
+                                  padding=[5, 5, 2.5, 5],
+                                  spacing=5,
+                                  size_hint=[.45, 1])
         for i in range(6):
-            ThemesLayout.add_widget(ThemeLabel(text=question_table[i][0]))
+            themes_layout.add_widget(ThemeLabel(text=question_table[i][0]))
 
-        PriceLayout = GridLayout(rows=6, cols=5,
-                                 padding=[2.5, 5, 5, 5],
-                                 spacing=5,
-                                 size_hint=[.55, 1])
-        for self.i in range(PriceLayout.rows):
-            for self.j in range(PriceLayout.cols):
-                PriceLayout.add_widget(Button(background_color=[.25, .25, 1, 1],
-                                              font_size=20,
-                                              id=str(self.i)+str(self.j),
-                                              on_press=self.question_window,
-                                              text=price_table[self.i][self.j]))
+        price_layout = GridLayout(rows=6, cols=5,
+                                  padding=[2.5, 5, 5, 5],
+                                  spacing=5,
+                                  size_hint=[.55, 1])
+        for self.i in range(price_layout.rows):
+            for self.j in range(price_layout.cols):
+                price_layout.add_widget(Button(background_color=[.25, .25, 1, 1],
+                                               font_size=20,
+                                               id=str(self.i)+str(self.j),
+                                               on_press=self.question_window,
+                                               text=price_table[self.i][self.j]))
 
-        self.add_widget(ThemesLayout)
-        self.add_widget(PriceLayout)
+        self.add_widget(themes_layout)
+        self.add_widget(price_layout)
 
     def question_window(self, instance):
         self.i = int(instance.id[0])
@@ -82,17 +80,19 @@ class MyOwnGame(App):
         return Main()
 
 
-book = openpyxl.load_workbook('Questions.xlsx')
+book = load_workbook('questions.xlsx')
 sheet = book.active
+
 question_table = []
 price_table = []
 letters = ["A", "B", "C", "D", "E", "F"]
+
 for i in range(6):
     question_table.append([])
     for j in range(6):
         question_table[i].append(str(sheet[letters[j] + str(i + 1)].value))
-for i in range(6):
     price_table.append([])
     for j in range(5):
         price_table[i].append(str((j + 1) * 100))
+
 MyOwnGame().run()
