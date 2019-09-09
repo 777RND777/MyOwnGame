@@ -49,7 +49,7 @@ class Main(BoxLayout):
             for self.j in range(price_layout.cols):
                 price_layout.add_widget(Button(background_color=[.25, .25, 1, 1],
                                                font_size=20,
-                                               id=str(self.i)+str(self.j),
+                                               id=str(self.i) + str(self.j),
                                                on_press=self.question_window,
                                                text=price_table[self.i][self.j]))
 
