@@ -10,7 +10,7 @@ kivy-deps.glew==0.3.0
 kivy-deps.sdl2==0.3.1
 Kivy-Garden==0.1.4
 openpyxl==3.0.5
-Pygments==2.7.3
+Pygments==2.7.4
 pypiwin32==223
 pywin32==300
 requests==2.25.1
