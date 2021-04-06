@@ -27,7 +27,9 @@ class ThemeLabel(Label):
 
 class QuestionButton(Button):
     def __init__(self, col, row, **kwargs):
-        super(QuestionButton, self).__init__(**kwargs)
+        super(Button, self).__init__(**kwargs)
+        self.background_color = [.25, .25, 1, 1]
+        self.font_size = 20
         self.col = col
         self.row = row
 
@@ -50,9 +52,7 @@ class Main(BoxLayout):
                                   size_hint=[.55, 1])
         for row in range(price_layout.rows):
             for col in range(price_layout.cols):
-                price_layout.add_widget(QuestionButton(background_color=[.25, .25, 1, 1],
-                                                       font_size=20,
-                                                       row=row, col=col,
+                price_layout.add_widget(QuestionButton(row=row, col=col,
                                                        on_press=self.question_window,
                                                        text=price_table[row][col]))
 
@@ -91,12 +91,9 @@ price_table = []
 letters = ["A", "B", "C", "D", "E", "F"]
 
 for i in range(6):
-    q = []
-    p = []
-    for j in range(6):
-        q.append(str(sheet[letters[j] + str(i + 1)].value))
-        p.append(str((j + 1) * 100))
+    q = [str(sheet[letter + str(i + 1)].value) for letter in letters]
     question_table.append(q)
+    p = [str((price + 1) * 100) for price in range(5)]
     price_table.append(p)
 
 MyOwnGame().run()
