@@ -25,11 +25,14 @@ class ThemeLabel(Label):
             Rectangle(pos=self.pos, size=self.size)
 
 
-class Main(BoxLayout):
-    def __init__(self, **kwargs):
-        super(Main, self).__init__(**kwargs)
-        self.add_widget(Button(text="START", on_press=self.main_window))
+class QuestionButton(Button):
+    def __init__(self, col, row, **kwargs):
+        super(QuestionButton, self).__init__(**kwargs)
+        self.col = col
+        self.row = row
 
+
+class Main(BoxLayout):
     def main_window(self, instance):
         self.clear_widgets()
         self.orientation = "horizontal"
@@ -38,31 +41,29 @@ class Main(BoxLayout):
                                   padding=[5, 5, 2.5, 5],
                                   spacing=5,
                                   size_hint=[.45, 1])
-        for i in range(6):
-            themes_layout.add_widget(ThemeLabel(text=question_table[i][0]))
+        for k in range(6):
+            themes_layout.add_widget(ThemeLabel(text=question_table[k][0]))
 
         price_layout = GridLayout(rows=6, cols=5,
                                   padding=[2.5, 5, 5, 5],
                                   spacing=5,
                                   size_hint=[.55, 1])
-        for self.i in range(price_layout.rows):
-            for self.j in range(price_layout.cols):
-                price_layout.add_widget(Button(background_color=[.25, .25, 1, 1],
-                                               font_size=20,
-                                               id=str(self.i) + str(self.j),
-                                               on_press=self.question_window,
-                                               text=price_table[self.i][self.j]))
+        for row in range(price_layout.rows):
+            for col in range(price_layout.cols):
+                price_layout.add_widget(QuestionButton(background_color=[.25, .25, 1, 1],
+                                                       font_size=20,
+                                                       row=row, col=col,
+                                                       on_press=self.question_window,
+                                                       text=price_table[row][col]))
 
         self.add_widget(themes_layout)
         self.add_widget(price_layout)
 
     def question_window(self, instance):
-        self.i = int(instance.id[0])
-        self.j = int(instance.id[1])
-        price_table[self.i][self.j] = ""
+        price_table[instance.row][instance.col] = ""
         self.clear_widgets()
         self.orientation = "vertical"
-        self.add_widget(ThemeLabel(size_hint=[1, .6], text=question_table[self.i][self.j + 1]))
+        self.add_widget(ThemeLabel(size_hint=[1, .6], text=question_table[instance.row][instance.col + 1]))
         self.add_widget(Button(background_color=[.25, .25, 1, 1],
                                on_press=self.main_window,
                                size_hint=[1, .4],
@@ -77,7 +78,9 @@ class Main(BoxLayout):
 
 class MyOwnGame(App):
     def build(self):
-        return Main()
+        m = Main()
+        m.add_widget(Button(text="START", on_press=m.main_window))
+        return m
 
 
 book = load_workbook('questions.xlsx')
@@ -88,11 +91,12 @@ price_table = []
 letters = ["A", "B", "C", "D", "E", "F"]
 
 for i in range(6):
-    question_table.append([])
+    q = []
+    p = []
     for j in range(6):
-        question_table[i].append(str(sheet[letters[j] + str(i + 1)].value))
-    price_table.append([])
-    for j in range(5):
-        price_table[i].append(str((j + 1) * 100))
+        q.append(str(sheet[letters[j] + str(i + 1)].value))
+        p.append(str((j + 1) * 100))
+    question_table.append(q)
+    price_table.append(p)
 
 MyOwnGame().run()
